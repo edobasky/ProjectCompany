@@ -4,11 +4,6 @@ using Entities.Exceptions;
 using Entities.Models;
 using Service.Contract;
 using Shared.DataTransferObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
@@ -37,6 +32,27 @@ namespace Service
             return companyToReturn; 
         }
 
+        public (IEnumerable<CompanyDto> companies, string ids) CreateCompanyCollection(IEnumerable<CompanyCreateDto> companyCollection)
+        {
+            if (companyCollection is null)
+            {
+                throw new CompanyCollectionBadRequest();
+            }
+
+            var companyEntities = _mapper.Map<IEnumerable<Company>>(companyCollection);
+
+            foreach (var company in companyEntities)
+            {
+                _repository.CompanyRepository.CreateCompany(company);
+            }
+            _repository.Save();
+
+            var companyCollectionToReturn = _mapper.Map<IEnumerable<CompanyDto>>(companyEntities);
+            var ids = string.Join(",", companyCollectionToReturn.Select(c => c.Id));
+
+            return (companies: companyCollectionToReturn, ids : ids);
+        }
+
         public IEnumerable<CompanyDto> GetAllCompanies(bool trackChanges)
         {
                 var companies = _repository.CompanyRepository.GetAllCompanies(trackChanges);
@@ -44,6 +60,23 @@ namespace Service
 
                 return companiesDto;   
          
+        }
+
+        public IEnumerable<CompanyDto> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
+        {
+            if (ids is null)
+                throw new IdParametersBadRequestException();
+
+            var companyEntities = _repository.CompanyRepository.GetByIds(ids, trackChanges);
+
+            if (ids.Count() != companyEntities.Count())
+            {
+                throw new CollectionByIdsBadRequestException();
+            }
+
+            var companiesToReturn = _mapper.Map<IEnumerable<CompanyDto>>(companyEntities);
+
+            return companiesToReturn;
         }
 
         public CompanyDto GetCompany(Guid companyId, bool trackChanges)
