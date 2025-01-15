@@ -4,6 +4,7 @@ using Entities.Exceptions;
 using Entities.Models;
 using Service.Contract;
 using Shared.DataTransferObjects;
+using System.ComponentModel.Design;
 
 namespace Service
 {
@@ -55,12 +56,7 @@ namespace Service
 
         public async Task DeleteCompany(Guid companyId, bool trackChanges)
         {
-            var company = await _repository.CompanyRepository.GetCompanyAsync(companyId, trackChanges);
-
-            if  (company is null)
-            {
-                throw new CompanyNotFoundException(companyId);
-            }
+            var company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
 
             _repository.CompanyRepository.DeleteCompany(company);
             await _repository.SaveAsync();
@@ -94,12 +90,7 @@ namespace Service
 
         public async Task<CompanyDto> GetCompany(Guid companyId, bool trackChanges)
         {
-            var company = await _repository.CompanyRepository.GetCompanyAsync(companyId, trackChanges);
-
-             if (company is null)
-            {
-                throw new CompanyNotFoundException(companyId);
-            }
+            var company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
 
             var companyDto = _mapper.Map<CompanyDto>(company);
 
@@ -108,12 +99,19 @@ namespace Service
 
         public async Task UpdateCompany(Guid companyId, CompanyForUpdateDto companyForUpdate, bool trackChanges)
         {
-            var companyEntity = await _repository.CompanyRepository.GetCompanyAsync(companyId,trackChanges);
+            var company = await GetCompanyAndCheckIfItExists(companyId, trackChanges);
 
-            if (companyEntity is null) throw new CompanyNotFoundException(companyId);
-
-            _mapper.Map(companyForUpdate, companyEntity);
+            _mapper.Map(companyForUpdate, company);
             await _repository.SaveAsync();
+        }
+
+        private async Task<Company> GetCompanyAndCheckIfItExists(Guid id,bool trackChanges)
+        {
+            var company = await _repository.CompanyRepository.GetCompanyAsync(id, trackChanges);
+
+            if (company is null) throw new CompanyNotFoundException(id);
+
+            return company;
         }
     }
 }
