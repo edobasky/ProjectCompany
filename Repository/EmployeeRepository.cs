@@ -2,6 +2,7 @@
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Shared.RequestFeatures;
+using Shared.RequestFeatures.MetaData;
 
 namespace Repository
 {
@@ -23,11 +24,22 @@ namespace Repository
             await FindByCondition(e => e.CompanyId.Equals(companyId) && e.Id.Equals(id), trackChanges)
         .SingleOrDefaultAsync();
 
-        public async Task<IEnumerable<Employees>> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameter, bool trackChanges) =>
-            await FindByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
-            .OrderBy(e => e.Name)
-            .Skip((employeeParameter.PageNumber - 1) * employeeParameter.PageSize)
-            .Take(employeeParameter.PageSize)
-            .ToListAsync();
+        /* public async Task<IEnumerable<Employees> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameter, bool trackChanges) =>
+             await FindByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
+             .OrderBy(e => e.Name)
+             .Skip((employeeParameter.PageNumber - 1) * employeeParameter.PageSize)
+             .Take(employeeParameter.PageSize)
+             .ToListAsync();*/
+
+        public async Task<PagedList<Employees>> GetEmployeesAsync(Guid companyId, EmployeeParameters employeeParameter, bool trackChanges)
+        {
+            var employees = await FindByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
+           .OrderBy(e => e.Name)
+           .ToListAsync();
+
+            return PagedList<Employees>
+                .ToPagedList(employees, employeeParameter.PageNumber, employeeParameter.PageSize);
+        }
+           
     }
 }

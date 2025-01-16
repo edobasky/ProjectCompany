@@ -5,6 +5,7 @@ using Entities.Models;
 using Service.Contract;
 using Shared.DataTransferObjects;
 using Shared.RequestFeatures;
+using Shared.RequestFeatures.MetaData;
 using System.ComponentModel.Design;
 
 namespace Service
@@ -62,15 +63,15 @@ namespace Service
             return employee;
         }
 
-        public async Task<IEnumerable<EmployeeDto>> GetEmployees(Guid companyId,EmployeeParameters employeeParameters, bool trackChanges)
+        public async Task<(IEnumerable<EmployeeDto> employees, MetaData metaData)> GetEmployees(Guid companyId,EmployeeParameters employeeParameters, bool trackChanges)
         {
              await CheckIfCompanyExists(companyId,trackChanges);
 
-            var employeesFromDb = await _repository.EmployeeRepository.GetEmployeesAsync(companyId,employeeParameters, trackChanges);
+            var employeesWithMetaData = await _repository.EmployeeRepository.GetEmployeesAsync(companyId,employeeParameters, trackChanges);
 
-            var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
+            var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesWithMetaData);
 
-            return employeesDto;
+            return (employees: employeesDto, metaData: employeesWithMetaData.metaData);
         }
 
         public async Task UpdateEmployeeForCompany(Guid companyId, Guid id, EmployeeForUpdateDto employeeForUpdate, bool compTrackChanges, bool empTrackChanges)
