@@ -1,4 +1,6 @@
 ﻿using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
+using Shared.RequestFeatures.MetaData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ namespace Service.Contract
 {
     public interface IEmployeeService
     {
-        Task<IEnumerable<EmployeeDto>> GetEmployees(Guid companyId, bool trackChanges);
+        Task<(IEnumerable<EmployeeDto> employees, MetaData metaData)> GetEmployees(Guid companyId,EmployeeParameters employeeParameters, bool trackChanges);
         Task<EmployeeDto> GetEmployee(Guid companyId, Guid id, bool trackChanges);
 
         Task<EmployeeDto> CreateEmployeeForCompany(Guid companyId, EmployeeCreateDto employeeCreate, bool trackChanges);
