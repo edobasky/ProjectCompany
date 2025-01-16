@@ -35,11 +35,15 @@ namespace Repository
         {
             var employees = await FindByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
            .OrderBy(e => e.Name)
+             .Skip((employeeParameter.PageNumber - 1) * employeeParameter.PageSize)
+             .Take(employeeParameter.PageSize)
            .ToListAsync();
 
+            var count = await FindByCondition(e => e.CompanyId.Equals(companyId),trackChanges).CountAsync();
+
             return PagedList<Employees>
-                .ToPagedList(employees, employeeParameter.PageNumber, employeeParameter.PageSize);
+                .ToPagedList(employees,count, employeeParameter.PageNumber, employeeParameter.PageSize);
         }
-           
+
     }
 }
