@@ -31,6 +31,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
+builder.Services.ConfigureVersioning();
 
 var app = builder.Build();
 
