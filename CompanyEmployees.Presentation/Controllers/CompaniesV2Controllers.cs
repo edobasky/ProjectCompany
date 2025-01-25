@@ -11,7 +11,8 @@ namespace CompanyEmployees.Presentation.Controllers
 {
     [ApiVersion("2.0")]
     [ApiController]
-    [Route("api/companies")]
+   // [Route("api/companies")]
+    [Route("api/{v:apiversion}/companies")] // commment above to use this.
     public class CompaniesV2Controllers : ControllerBase
     {
         private readonly IServiceManager _service;    
@@ -24,7 +25,9 @@ namespace CompanyEmployees.Presentation.Controllers
         {
             var companies = await _service.CompanyService.GetAllCompanies(trackChanges: false);
 
-            return Ok(companies);
+            var companiesV2 = companies.Select(x => $"{x.Name} V2");
+
+            return Ok(companiesV2);
         }
     }
 }

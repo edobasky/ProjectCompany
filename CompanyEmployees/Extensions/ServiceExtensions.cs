@@ -47,6 +47,7 @@ namespace CompanyEmployees.Extensions
                 opt.ReportApiVersions = true;
                 opt.AssumeDefaultVersionWhenUnspecified = true;
                 opt.DefaultApiVersion = new ApiVersion(1, 0);
+                opt.ApiVersionReader = new HeaderApiVersionReader("api-version"); // this added will allow the client specify the version in the header like you do api-key
             }).AddMvc();
         }
     }
