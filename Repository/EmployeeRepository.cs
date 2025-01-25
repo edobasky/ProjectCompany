@@ -40,6 +40,7 @@ namespace Repository
            .OrderBy(e => e.Name)
            .FilterEmployees(employeeParameter.MinAge, employeeParameter.MaxAge)
            .Search(employeeParameter.SearchTerm)
+           .Sort(employeeParameter.OrderBy)
              .Skip((employeeParameter.PageNumber - 1) * employeeParameter.PageSize)
              .Take(employeeParameter.PageSize)
            .ToListAsync();
