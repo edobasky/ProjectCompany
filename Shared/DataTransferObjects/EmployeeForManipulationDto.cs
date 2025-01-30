@@ -13,7 +13,7 @@ namespace Shared.DataTransferObjects
         public int Age { get; init; }
 
         [Required(ErrorMessage = "Position is a required field")]
-        [MaxLength(20, ErrorMessage = "Maximum length for the Position is 20 characters.")]
+        [MaxLength(40, ErrorMessage = "Maximum length for the Position is 20 characters.")]
         public string? Position { get; init; }
     }
 }

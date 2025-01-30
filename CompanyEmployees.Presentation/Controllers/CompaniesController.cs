@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using CompanyEmployees.Presentation.ActionFilters;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Service.Contract;
 using Shared.DataTransferObjects;
 
@@ -16,6 +17,8 @@ namespace CompanyEmployees.Presentation.Controllers
         public CompaniesController(IServiceManager service) => _service = service;
 
         [HttpGet]
+        // [ResponseCache(CacheProfileName = "120SecDuration")]
+        [OutputCache(PolicyName = "120SecondsDuration'")]
         public async Task<IActionResult> GetCompanies()
         {
             var companies = await _service.CompanyService.GetAllCompanies(trackChanges: false);
@@ -24,9 +27,11 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpGet("{id:guid}", Name = "CompanyById")]
-        public IActionResult GetCompany(Guid id)
+        //  [ResponseCache(Duration = 60)]
+        [OutputCache(Duration = 60)]
+        public async Task<IActionResult> GetCompany(Guid id)
         {
-            var company = _service.CompanyService.GetCompany(id, trackChanges: false);
+            var company = await _service.CompanyService.GetCompany(id, trackChanges: false);
             return Ok(company);
         }
 
