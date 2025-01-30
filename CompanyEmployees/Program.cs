@@ -20,6 +20,7 @@ builder.Services.AddControllers(config =>
 {
     config.RespectBrowserAcceptHeader = true;
     config.ReturnHttpNotAcceptable = true;
+    //config.CacheProfiles.Add("120SecDuration", new CacheProfile { Duration = 120});
 }).AddXmlDataContractSerializerFormatters()
   .AddCustomCSVFormatter()
     .AddApplicationPart(typeof(CompanyEmployees.Presentation.AssemblyReference).Assembly);
@@ -32,6 +33,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 builder.Services.ConfigureVersioning();
+//builder.Services.ConfigureResponseCaching();
+builder.Services.ConfigureOutputCaching();
 
 var app = builder.Build();
 
@@ -54,6 +57,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 
 app.UseCors("CorsPolicy");
+//app.UseResponseCaching();
+app.UseOutputCache();
 app.UseAuthorization();
 //Custom middlewares goes here...!
 app.MapControllers();

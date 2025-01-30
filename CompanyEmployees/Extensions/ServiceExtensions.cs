@@ -50,5 +50,14 @@ namespace CompanyEmployees.Extensions
                 opt.ApiVersionReader = new HeaderApiVersionReader("api-version"); // this added will allow the client specify the version in the header like you do api-key
             }).AddMvc();
         }
+
+        /* public static void ConfigureResponseCaching(this IServiceCollection services) =>
+             services.AddResponseCaching();*/
+
+        public static void ConfigureOutputCaching(this IServiceCollection services) =>
+           services.AddOutputCache(opt =>
+           {
+               opt.AddPolicy("120SecondsDuration", p => p.Expire(TimeSpan.FromSeconds(120)));
+           });
     }
 }
