@@ -35,6 +35,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 builder.Services.ConfigureVersioning();
 //builder.Services.ConfigureResponseCaching();
 builder.Services.ConfigureOutputCaching();
+builder.Services.ConfigureRateLimitingOptions();
 
 var app = builder.Build();
 
@@ -60,6 +61,7 @@ app.UseCors("CorsPolicy");
 //app.UseResponseCaching();
 app.UseOutputCache();
 app.UseAuthorization();
+app.UseRateLimiter();
 //Custom middlewares goes here...!
 app.MapControllers();
 
